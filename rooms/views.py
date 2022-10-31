@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.db import transaction
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import status
 from rest_framework import exceptions
+from rest_framework.response import Response
 from .models import Room, Amenity, Facility, HouseRule
 from categories.models import Category
 from .serializers import (
@@ -79,9 +79,8 @@ class Facilities(APIView):
             return Response(serializer.errors)
 
         facility = serializer.save()
-        return Response(
-            FacilitySerializer(facility).data,
-        )
+        serializer = FacilitySerializer(facility)
+        return Response(serializer.data)
 
 
 class FacilityDetail(APIView):

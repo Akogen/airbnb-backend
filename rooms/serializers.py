@@ -6,33 +6,6 @@ from categories.serializers import CategorySerializer
 from medias.serializers import PhotoSerializer
 
 
-class AmenitySerializer(ModelSerializer):
-    class Meta:
-        model = Amenity
-        fields = (
-            "name",
-            "description",
-        )
-
-
-class FacilitySerializer(ModelSerializer):
-    class Meta:
-        model = Facility
-        fields = (
-            "name",
-            "description",
-        )
-
-
-class HouseRuleSerializer(ModelSerializer):
-    class Meta:
-        model = HouseRule
-        fields = (
-            "name",
-            "description",
-        )
-
-
 class RoomSerializer(ModelSerializer):
     class Meta:
         model = Room
@@ -90,3 +63,30 @@ class RoomDetailSerializer(ModelSerializer):
     def get_is_owner(self, room):
         request = self.context["request"]
         return room.host == request.user
+
+
+class AmenitySerializer(ModelSerializer):
+    class Meta:
+        model = Amenity
+        fields = (
+            "name",
+            "description",
+        )
+
+
+class FacilitySerializer(ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = (
+            "name",
+            "description",
+        )
+
+
+class HouseRuleSerializer(ModelSerializer):
+    class Meta:
+        model = HouseRule
+        fields = (
+            "name",
+            "description",
+        )
