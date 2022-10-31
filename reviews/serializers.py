@@ -1,10 +1,9 @@
-from re import T
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from users.serializers import TinyUserSerializer
 from .models import Review
 
 
-class ReviewSerializer(serializers.ModelSerializer):
+class ReviewSerializer(ModelSerializer):
     user = TinyUserSerializer(read_only=True)
 
     class Meta:

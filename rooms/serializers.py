@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Room, Amenity, Facility, HouseRule
 from users.serializers import TinyUserSerializer
 from categories.serializers import CategorySerializer
@@ -6,7 +6,7 @@ from categories.serializers import CategorySerializer
 from medias.serializers import PhotoSerializer
 
 
-class AmenitySerializer(serializers.ModelSerializer):
+class AmenitySerializer(ModelSerializer):
     class Meta:
         model = Amenity
         fields = (
@@ -15,7 +15,7 @@ class AmenitySerializer(serializers.ModelSerializer):
         )
 
 
-class FacilitySerializer(serializers.ModelSerializer):
+class FacilitySerializer(ModelSerializer):
     class Meta:
         model = Facility
         fields = (
@@ -24,7 +24,7 @@ class FacilitySerializer(serializers.ModelSerializer):
         )
 
 
-class HouseRuleSerializer(serializers.ModelSerializer):
+class HouseRuleSerializer(ModelSerializer):
     class Meta:
         model = HouseRule
         fields = (
@@ -33,16 +33,16 @@ class HouseRuleSerializer(serializers.ModelSerializer):
         )
 
 
-class RoomSerializer(serializers.ModelSerializer):
+class RoomSerializer(ModelSerializer):
     class Meta:
         model = Room
         fields = "__all__"
         depth = 1
 
 
-class RoomListSerializer(serializers.ModelSerializer):
-    review_rating = serializers.SerializerMethodField()
-    is_owner = serializers.SerializerMethodField()
+class RoomListSerializer(ModelSerializer):
+    review_rating = SerializerMethodField()
+    is_owner = SerializerMethodField()
     photos = PhotoSerializer(
         read_only=True,
         many=True,
@@ -69,12 +69,12 @@ class RoomListSerializer(serializers.ModelSerializer):
         return room.host == request.user
 
 
-class RoomDetailSerializer(serializers.ModelSerializer):
+class RoomDetailSerializer(ModelSerializer):
     host = TinyUserSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
 
-    review_rating = serializers.SerializerMethodField()
-    is_owner = serializers.SerializerMethodField()
+    review_rating = SerializerMethodField()
+    is_owner = SerializerMethodField()
     photos = PhotoSerializer(
         read_only=True,
         many=True,

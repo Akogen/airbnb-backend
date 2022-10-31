@@ -43,8 +43,8 @@ class AmenityDetail(APIView):
             raise exceptions.NotFound
 
     def get(self, request, pk):
-        all_amenities = self.get_object(pk)
-        serializer = AmenitySerializer(all_amenities)
+        amenity = self.get_object(pk)
+        serializer = AmenitySerializer(amenity)
         return Response(serializer.data)
 
     def put(self, request, pk):
