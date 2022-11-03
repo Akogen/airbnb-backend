@@ -128,7 +128,6 @@ class Room(AbstractTimeStamp):
 
     def save(self, *args, **kwargs):
         self.city = str.capitalize(self.city)
-        print(self.city)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

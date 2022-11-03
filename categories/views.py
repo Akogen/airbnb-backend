@@ -51,4 +51,4 @@ class CategoryDetail(APIView):
     def delete(self, request, pk):
         category = self.get_object(pk)
         category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_200_OK)

@@ -1,16 +1,11 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import NotFound
+from rest_framework.views import APIView
+from rest_framework import exceptions
+from rest_framework import status
+from rest_framework.response import Response
 from .models import Wishlist
 from .serializers import WishlistSerializer
-from rest_framework.exceptions import (
-    NotFound,
-    NotAuthenticated,
-    ParseError,
-    PermissionDenied,
-)
-from rest_framework.status import HTTP_200_OK
+from rooms.models import Room
 
 
 class Wishlists(APIView):
@@ -33,8 +28,9 @@ class Wishlists(APIView):
         )
         if not serializer.is_valid():
             return Response(serializer.errors)
-        created_wishlist = serializer.save(user=request.user)
-        serializer = WishlistSerializer(created_wishlist)
+
+        wishlist = serializer.save(user=request.user)
+        serializer = WishlistSerializer(wishlist)
         return Response(serializer.data)
 
 
@@ -46,12 +42,29 @@ class WishlistDetail(APIView):
         try:
             return Wishlist.objects.get(pk=pk, user=user)
         except Wishlist.DoesNotExist:
-            raise NotFound
+            raise exceptions.NotFound
 
     def get(self, request, pk):
-        wishlist_detail = self.get_object(pk, request.user)
+        wishlist = self.get_object(pk, request.user)
         serializer = WishlistSerializer(
-            wishlist_detail,
+            wishlist,
+            context={"request": request},
+        )
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        wishlist = self.get_object(pk, request.user)
+        serializer = WishlistSerializer(
+            wishlist,
+            data=request.data,
+            partial=True,
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+
+        wishlist = serializer.save()
+        serializer = WishlistSerializer(
+            wishlist,
             context={"request": request},
         )
         return Response(serializer.data)
@@ -59,24 +72,7 @@ class WishlistDetail(APIView):
     def delete(self, request, pk):
         wishlist = self.get_object(pk, request.user)
         wishlist.delete()
-        return Response(status=HTTP_200_OK)
-
-
-def put(self, request, pk):
-    wishlist = self.get_object(pk, request.user)
-    serializer = WishlistSerializer(
-        wishlist,
-        data=request.data,
-        partial=True,
-    )
-    if not serializer.is_valid():
-        return Response(serializer.errors)
-    wishlist = serializer.save()
-    serializer = WishlistSerializer(
-        wishlist,
-        context={"request": request},
-    )
-    return Response(serializer.data)
+        return Response(status=status.HTTP_200_OK)
 
 
 class WishlistToggle(APIView):
@@ -84,13 +80,13 @@ class WishlistToggle(APIView):
         try:
             return Wishlist.objects.get(pk=pk, user=user)
         except Wishlist.DoesNotExist:
-            raise NotFound
+            raise exceptions.NotFound
 
     def get_room(self, pk):
         try:
             return Room.objects.get(pk=pk)
         except Room.DoesNotExist:
-            raise NotFound
+            raise exceptions.NotFound
 
     def put(self, request, pk, room_pk):
         wishlist = self.get_list(pk, request.user)
@@ -99,4 +95,4 @@ class WishlistToggle(APIView):
             wishlist.rooms.remove(room)
         else:
             wishlist.rooms.add(room)
-        return Response(status=HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
